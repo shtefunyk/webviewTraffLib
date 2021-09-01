@@ -31,7 +31,7 @@ import static com.traffbooster.car.core.Constants.FIREBASE_DATA;
 import static com.traffbooster.car.core.Constants.FIREBASE_SHOW_PLACEHOLDER;
 import static com.traffbooster.car.core.Constants.FIREBASE_URL;
 
-public abstract class StartActivity extends AppCompatActivity implements AdvancedWebView.Listener {
+public abstract class StartActivity extends AppCompatActivity {
 
     private AdvancedWebView webView;
     private ProgressBar progressBar;
@@ -58,7 +58,22 @@ public abstract class StartActivity extends AppCompatActivity implements Advance
 
     private void initViews() {
         webView = findViewById(R.id.webView);
-        webView.setListener(this, this);
+        webView.setListener(this, new AdvancedWebView.Listener() {
+            @Override
+            public void onPageStarted(String url, Bitmap favicon) {
+                if(showWebView) {
+                    webView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onPageFinished(String url) {
+                CookieManager.getInstance().flush();
+            }
+            @Override public void onPageError(int errorCode, String description, String failingUrl) { }
+            @Override public void onDownloadRequested(String url, String suggestedFilename, String mimeType, long contentLength, String contentDisposition, String userAgent) { }
+            @Override public void onExternalPageRequest(String url) { }
+        });
         webView.setWebChromeClient(new ChromeClient());
         webView.getSettings().setDomStorageEnabled(true);
         CookieManager.getInstance().setAcceptCookie(true);
@@ -187,26 +202,6 @@ public abstract class StartActivity extends AppCompatActivity implements Advance
             getWindow().getDecorView().setSystemUiVisibility(3846 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
     }
-
-    @Override
-    public void onPageStarted(String url, Bitmap favicon) {
-        if(showWebView) {
-            webView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onPageFinished(String url) {
-        CookieManager.getInstance().flush();
-    }
-
-    @Override
-    public void onPageError(int errorCode, String description, String failingUrl) {}
-    @Override
-    public void onDownloadRequested(String url, String suggestedFilename, String mimeType, long contentLength, String contentDisposition, String userAgent) { }
-    @Override
-    public void onExternalPageRequest(String url) {}
 
     @Override
     public void onBackPressed() {
