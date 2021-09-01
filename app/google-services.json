@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "980719248614",
+    "project_id": "traffboostertest",
+    "storage_bucket": "traffboostertest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980719248614:android:d6d6ee28a64bced0c54727",
+        "android_client_info": {
+          "package_name": "com.traffbooster.car"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "980719248614-jtbv68keea9lmsocv89gbhjuahn7ncjh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbaUlJdJjk4Btf5-a8JGEoBTYKbFShV3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980719248614-jtbv68keea9lmsocv89gbhjuahn7ncjh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980719248614:android:36fac2cf5ae1a9a7c54727",
+        "android_client_info": {
+          "package_name": "com.traffbooster.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "980719248614-jtbv68keea9lmsocv89gbhjuahn7ncjh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbaUlJdJjk4Btf5-a8JGEoBTYKbFShV3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980719248614-jtbv68keea9lmsocv89gbhjuahn7ncjh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,11 +1,11 @@
 package com.traffbooster.driver
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
+import android.content.Intent
+import com.traffbooster.car.core.StartActivity
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+class MainActivity : StartActivity() {
+
+    override fun onShowAppUi() {
+        startActivity(Intent(this, ExampleActivity::class.java))
     }
 }
