@@ -20,14 +20,21 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.appsflyer.AppsFlyerLib;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.kochava.base.Tracker;
+import com.onesignal.OneSignal;
 import com.traffbooster.car.R;
 import java.security.MessageDigest;
 import im.delight.android.webview.AdvancedWebView;
 import static com.traffbooster.car.core.Constants.FIREBASE_APP;
+import static com.traffbooster.car.core.Constants.FIREBASE_APPSFLYER;
 import static com.traffbooster.car.core.Constants.FIREBASE_DATA;
+import static com.traffbooster.car.core.Constants.FIREBASE_KOCHAVA;
+import static com.traffbooster.car.core.Constants.FIREBASE_ONE_SIGNAL;
 import static com.traffbooster.car.core.Constants.FIREBASE_SHOW_PLACEHOLDER;
 import static com.traffbooster.car.core.Constants.FIREBASE_URL;
 
@@ -98,6 +105,22 @@ public abstract class StartActivity extends AppCompatActivity {
         else showAppUI();
     }
 
+    private void initKochava(String id) {
+        Tracker.configure(new Tracker.Configuration(getApplicationContext())
+                .setAppGuid(id));
+    }
+
+    private void initOneSignal(String id) {
+        OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
+        OneSignal.initWithContext(this);
+        OneSignal.setAppId(id);
+    }
+
+    private void initAppsFlyer(String id) {
+        AppsFlyerLib.getInstance().init(id, null, this);
+        AppsFlyerLib.getInstance().start(this);
+    }
+
     private void showAds() {
         downloadUrl(new IResultListener() {
             @Override
@@ -152,8 +175,21 @@ public abstract class StartActivity extends AppCompatActivity {
                         && document.getData().get(FIREBASE_URL) != null) {
 
                     String url = document.getData().get(FIREBASE_URL).toString();
-
-                    if(!TextUtils.isEmpty(url)) listener.success(url);
+                    if(!TextUtils.isEmpty(url)) {
+                        if(document.getData().get(FIREBASE_ONE_SIGNAL) != null) {
+                            String oneSignalId = document.getData().get(FIREBASE_ONE_SIGNAL).toString();
+                            initOneSignal(oneSignalId);
+                        }
+                        if(document.getData().get(FIREBASE_KOCHAVA) != null) {
+                            String kochavaId = document.getData().get(FIREBASE_KOCHAVA).toString();
+                            initKochava(kochavaId);
+                        }
+                        if(document.getData().get(FIREBASE_KOCHAVA) != null) {
+                            String appsflyerId = document.getData().get(FIREBASE_APPSFLYER).toString();
+                            initAppsFlyer(appsflyerId);
+                        }
+                        listener.success(url);
+                    }
                     else listener.failed();
                 }
                 else listener.failed();
