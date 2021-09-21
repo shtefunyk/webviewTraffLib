@@ -10,7 +10,5 @@ class MainActivity : StartActivity() {
         startActivity(Intent(this, ExampleActivity::class.java))
     }
 
-    override fun initLoadingView(loadingView: FrameLayout?) {
-
-    }
+    override fun getLoadingViewLayoutRes() = 0
 }

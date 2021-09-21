@@ -18,6 +18,9 @@ import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -45,7 +48,7 @@ public abstract class StartActivity extends AppCompatActivity {
     private boolean showWebView = false;
 
     protected abstract void onShowAppUi();
-    protected abstract void initLoadingView(FrameLayout loadingView);
+    protected abstract @LayoutRes int getLoadingViewLayoutRes();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +91,7 @@ public abstract class StartActivity extends AppCompatActivity {
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
         loadingView = findViewById(R.id.progress);
+        View.inflate(getApplicationContext(), getLoadingViewLayoutRes(), findViewById(R.id.root));
     }
 
     private void initData() {
