@@ -41,10 +41,11 @@ import static com.traffbooster.car.core.Constants.FIREBASE_URL;
 public abstract class StartActivity extends AppCompatActivity {
 
     private AdvancedWebView webView;
-    private ProgressBar progressBar;
+    private FrameLayout loadingView;
     private boolean showWebView = false;
 
     protected abstract void onShowAppUi();
+    protected abstract void initLoadingView(FrameLayout loadingView);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public abstract class StartActivity extends AppCompatActivity {
             public void onPageStarted(String url, Bitmap favicon) {
                 if(showWebView) {
                     webView.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
+                    loadingView.setVisibility(View.GONE);
                 }
             }
             @Override
@@ -86,7 +87,7 @@ public abstract class StartActivity extends AppCompatActivity {
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
-        progressBar = findViewById(R.id.progress);
+        loadingView = findViewById(R.id.progress);
     }
 
     private void initData() {
