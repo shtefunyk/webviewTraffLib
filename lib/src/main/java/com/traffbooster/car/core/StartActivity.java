@@ -91,8 +91,7 @@ public abstract class StartActivity extends AppCompatActivity {
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
         loadingView = findViewById(R.id.progress);
-        View view = View.inflate(getApplicationContext(), getLoadingViewLayoutRes(), loadingView);
-        loadingView.addView(view);
+        View.inflate(getApplicationContext(), getLoadingViewLayoutRes(), loadingView);
     }
 
     private void initData() {
