@@ -3,6 +3,7 @@ package com.traffbooster.car.core;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -17,13 +18,9 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-
-import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.appsflyer.AppsFlyerLib;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,12 +37,15 @@ import static com.traffbooster.car.core.Constants.FIREBASE_KOCHAVA;
 import static com.traffbooster.car.core.Constants.FIREBASE_ONE_SIGNAL;
 import static com.traffbooster.car.core.Constants.FIREBASE_SHOW_PLACEHOLDER;
 import static com.traffbooster.car.core.Constants.FIREBASE_URL;
+import static com.traffbooster.car.core.Constants.PREFS;
+import static com.traffbooster.car.core.Constants.PREFS_LAST_URL;
 
 public abstract class StartActivity extends AppCompatActivity {
 
     private AdvancedWebView webView;
     private FrameLayout loadingView;
     private boolean showWebView = false;
+    private SharedPreferences prefs;
 
     protected abstract void onShowAppUi();
     protected abstract @LayoutRes int getLoadingViewLayoutRes();
@@ -55,6 +55,8 @@ public abstract class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppThemeWebView);
         setContentView(R.layout.activity_webview);
+
+        prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
 
         initStatusBar();
         initViews();
@@ -80,6 +82,7 @@ public abstract class StartActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(String url) {
                 CookieManager.getInstance().flush();
+                prefs.edit().putString(PREFS_LAST_URL, url).apply();
             }
             @Override public void onPageError(int errorCode, String description, String failingUrl) { }
             @Override public void onDownloadRequested(String url, String suggestedFilename, String mimeType, long contentLength, String contentDisposition, String userAgent) { }
@@ -127,18 +130,24 @@ public abstract class StartActivity extends AppCompatActivity {
     }
 
     private void showAds() {
-        downloadUrl(new IResultListener() {
+        String lastUrl = prefs.getString(PREFS_LAST_URL, null);
+        if(!TextUtils.isEmpty(lastUrl)) loadUrl(lastUrl);
+        else downloadUrl(new IResultListener() {
             @Override
             public void success(String result) {
-                webView.post(() -> {
-                    showWebView = true;
-                    webView.loadUrl(result);
-                });
+                loadUrl(result);
             }
             @Override
             public void failed() {
                 showAppUI();
             }
+        });
+    }
+
+    private void loadUrl(String url) {
+        webView.post(() -> {
+            showWebView = true;
+            webView.loadUrl(url);
         });
     }
 

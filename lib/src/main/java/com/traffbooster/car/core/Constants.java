@@ -9,4 +9,7 @@ public class Constants {
     public static final String FIREBASE_KOCHAVA = "firebase_kochava";
     public static final String FIREBASE_APPSFLYER = "firebase_appsflyer";
     public static final String FIREBASE_SHOW_PLACEHOLDER = "showPlaceholder";
+
+    public static final String PREFS = "prefs";
+    public static final String PREFS_LAST_URL = "prefs_last_url";
 }
