@@ -74,6 +74,7 @@ public abstract class StartActivity extends AppCompatActivity {
         webView.setListener(this, new AdvancedWebView.Listener() {
             @Override
             public void onPageStarted(String url, Bitmap favicon) {
+                Log.d("onPageStarted", url);
                 if(showWebView) {
                     webView.setVisibility(View.VISIBLE);
                     loadingView.setVisibility(View.GONE);
@@ -92,6 +93,11 @@ public abstract class StartActivity extends AppCompatActivity {
         webView.getSettings().setDomStorageEnabled(true);
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setLoadWithOverviewMode(false);
+        webView.getSettings().setUserAgentString(webView.getSettings().getUserAgentString().replace("; wv", ""));
 
         loadingView = findViewById(R.id.progress);
         View.inflate(getApplicationContext(), getLoadingViewLayoutRes(), loadingView);
