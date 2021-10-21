@@ -1,5 +1,15 @@
 package com.traffbooster.car.core;
 
+import static com.traffbooster.car.core.Constants.FIREBASE_APP;
+import static com.traffbooster.car.core.Constants.FIREBASE_APPSFLYER;
+import static com.traffbooster.car.core.Constants.FIREBASE_DATA;
+import static com.traffbooster.car.core.Constants.FIREBASE_KOCHAVA;
+import static com.traffbooster.car.core.Constants.FIREBASE_ONE_SIGNAL;
+import static com.traffbooster.car.core.Constants.FIREBASE_SHOW_PLACEHOLDER;
+import static com.traffbooster.car.core.Constants.FIREBASE_URL;
+import static com.traffbooster.car.core.Constants.PREFS;
+import static com.traffbooster.car.core.Constants.PREFS_LAST_URL;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +28,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.widget.FrameLayout;
+
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +39,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.kochava.base.Tracker;
 import com.onesignal.OneSignal;
 import com.traffbooster.car.R;
+
 import java.security.MessageDigest;
+
 import im.delight.android.webview.AdvancedWebView;
 import static com.traffbooster.car.core.Constants.FIREBASE_APP;
 import static com.traffbooster.car.core.Constants.FIREBASE_APPSFLYER;
