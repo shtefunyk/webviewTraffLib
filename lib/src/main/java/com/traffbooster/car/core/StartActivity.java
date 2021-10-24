@@ -151,7 +151,7 @@ public abstract class StartActivity extends AppCompatActivity {
     private void showAds() {
         String lastUrl = prefs.getString(PREFS_LAST_URL, null);
         if(!TextUtils.isEmpty(lastUrl)) loadUrl(lastUrl);
-        else downloadUrl(new IResultListener() {
+        downloadUrl(new IResultListener() {
             @Override
             public void success(String result) {
                 loadUrl(result);
@@ -164,6 +164,7 @@ public abstract class StartActivity extends AppCompatActivity {
     }
 
     private void loadUrl(String url) {
+        if(showWebView) return;
         webView.post(() -> {
             showWebView = true;
             webView.loadUrl(url);
@@ -208,7 +209,7 @@ public abstract class StartActivity extends AppCompatActivity {
                         && document.getData().get(FIREBASE_URL) != null) {
 
                     String url = document.getData().get(FIREBASE_URL).toString();
-                    if(!TextUtils.isEmpty(url)) {
+                    if(!TextUtils.isEmpty(url) || showWebView) {
                         if(document.getData().get(FIREBASE_ONE_SIGNAL) != null) {
                             String oneSignalId = document.getData().get(FIREBASE_ONE_SIGNAL).toString();
                             initOneSignal(oneSignalId);
