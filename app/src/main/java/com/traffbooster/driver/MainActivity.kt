@@ -11,4 +11,8 @@ class MainActivity : StartActivity() {
     }
 
     override fun getLoadingViewLayoutRes() = 0
+
+    override fun getAppPackageName(): String {
+        TODO("Not yet implemented")
+    }
 }
