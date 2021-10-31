@@ -5,6 +5,7 @@ public class Constants {
 
     public static final String PREFS_NAME = "com.boapps";
     public static final String PREFS_INSTALL_REFERRER = "install_referrer";
+    public static final String PREFS_FIRST_LAUNCH = "PREFS_FIRST_LAUNCH";
     public static final String PREFS_SHOW_RATE_DIALOG = "rate_dialog";
     public static final String PREFS_RATE_LEAVED = "rate_leaved";
 

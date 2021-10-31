@@ -1,18 +1,10 @@
 package com.traffbooster.driver
 
-import android.content.Intent
-import android.widget.FrameLayout
 import com.traffbooster.car.core.StartActivity
 
 class MainActivity : StartActivity() {
 
-    override fun onShowAppUi() {
-        startActivity(Intent(this, ExampleActivity::class.java))
-    }
+    override fun getLoadingViewLayoutRes() = R.layout.loadingg;
 
-    override fun getLoadingViewLayoutRes() = 0
-
-    override fun getAppPackageName(): String {
-        TODO("Not yet implemented")
-    }
+    override fun getAppPackageName(): String = "com.traffbooster.driver"
 }

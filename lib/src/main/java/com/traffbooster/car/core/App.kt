@@ -7,7 +7,7 @@ import com.appsflyer.AppsFlyerLib
 import com.google.firebase.FirebaseApp
 import com.traffbooster.car.R
 
-open class App : Application() {
+abstract class App : Application() {
 
     companion object {
         lateinit var instance: App
@@ -19,6 +19,10 @@ open class App : Application() {
         this.listener = listener
         initAppsflyer(id)
     }
+
+    abstract fun getIntroItems(): List<IntroItem>
+    abstract fun getIntroBgColor() : Int
+    abstract fun getAppUiClassName() : Class<*>
 
     override fun onCreate() {
         super.onCreate()

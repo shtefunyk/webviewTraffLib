@@ -43,7 +43,6 @@ public abstract class StartActivity extends AppCompatActivity {
     private Integer systemUiVisibility;
     private String idAppsflyer;
 
-    protected abstract void onShowAppUi();
     protected abstract @LayoutRes int getLoadingViewLayoutRes();
     protected abstract String getAppPackageName();
 
@@ -196,8 +195,14 @@ public abstract class StartActivity extends AppCompatActivity {
     }
 
     protected void showAppUI() {
+        if(prefs.getBoolean(Constants.PREFS_FIRST_LAUNCH, true)){
+            prefs.edit().putBoolean(Constants.PREFS_FIRST_LAUNCH, false).apply();
+            startActivity(new Intent(this, Intro.class));
+        }
+        else {
+            startActivity(new Intent(this, ((App) getApplication()).getAppUiClassName()));
+        }
         finish();
-        onShowAppUi();
     }
 
     private void updateStatusBar() {
