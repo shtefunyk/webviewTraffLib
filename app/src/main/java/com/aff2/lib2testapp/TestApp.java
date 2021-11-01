@@ -1,11 +1,9 @@
-package com.traffbooster.driver;
-
-import android.content.Intent;
+package com.aff2.lib2testapp;
 
 import androidx.annotation.NonNull;
 
-import com.traffbooster.car.core.App;
-import com.traffbooster.car.core.IntroItem;
+import com.aff2.car.core.App;
+import com.aff2.car.core.IntroItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,5 +34,11 @@ public class TestApp extends App {
     @Override
     public int getIntroBgColor() {
         return R.color.colorIntro;
+    }
+
+    @NonNull
+    @Override
+    public String getAppsflyerId() {
+        return "tuRVfbsRT7QoUMoFqjUL8a";
     }
 }

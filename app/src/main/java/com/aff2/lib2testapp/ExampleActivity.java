@@ -1,4 +1,4 @@
-package com.traffbooster.driver;
+package com.aff2.lib2testapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 

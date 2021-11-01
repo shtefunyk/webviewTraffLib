@@ -1,4 +1,4 @@
-package com.traffbooster.car.core;
+package com.aff2.car.core;
 
 import android.util.Pair;
 

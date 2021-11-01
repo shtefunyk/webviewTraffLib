@@ -1,4 +1,4 @@
-package com.traffbooster.car.core;
+package com.aff2.car.core;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +27,7 @@ import com.appsflyer.AppsFlyerLib;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.onesignal.OneSignal;
-import com.traffbooster.car.R;
+import com.aff2.car.R;
 
 import org.json.JSONObject;
 
@@ -41,7 +41,6 @@ public abstract class StartActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private boolean showWebView = false;
     private Integer systemUiVisibility;
-    private String idAppsflyer;
 
     protected abstract @LayoutRes int getLoadingViewLayoutRes();
     protected abstract String getAppPackageName();
@@ -91,7 +90,7 @@ public abstract class StartActivity extends AppCompatActivity {
     }
 
     private void step2(String url, String referrer) {
-        ((App) getApplication()).getAfData(idAppsflyer, new IResultListener() {
+        ((App) getApplication()).getAfData(new IResultListener() {
             @Override
             public void success(String result) {
                 step3(url, referrer, result);
@@ -106,7 +105,7 @@ public abstract class StartActivity extends AppCompatActivity {
 
     private void step3(String url, String referrerRes, String afDataRes) {
         String appId = getAppPackageName();
-        String afDevKey = idAppsflyer;
+        String afDevKey = ((App) getApplication()).getAppsflyerId();
         String afDeviceId = AppsFlyerLib.getInstance().getAppsFlyerUID(this);
 
         String referrer = referrerRes == null ? "" : referrerRes;
@@ -158,9 +157,6 @@ public abstract class StartActivity extends AppCompatActivity {
                 String alert = firebaseRemoteConfig.getString("alert");
                 String oneSignalId = firebaseRemoteConfig.getString("id_onesignal");
                 if(!TextUtils.isEmpty(oneSignalId)) initOneSignal(oneSignalId);
-
-                idAppsflyer = firebaseRemoteConfig.getString("id_appsflyer");
-
                 if(!TextUtils.isEmpty(alert)) initRateDialog(alert);
 
                 String country = "";

@@ -1,11 +1,11 @@
-package com.traffbooster.car.core
+package com.aff2.car.core
 
 import android.app.Application
 import android.util.Log
 import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
 import com.google.firebase.FirebaseApp
-import com.traffbooster.car.R
+import com.aff2.car.R
 
 abstract class App : Application() {
 
@@ -14,21 +14,26 @@ abstract class App : Application() {
     }
 
     private var listener: IResultListener? = null
+    private var afData: String? = null
+    private var failed: Boolean? = null
 
-    fun getAfData(id: String, listener: IResultListener) {
+    fun getAfData(listener: IResultListener) {
         this.listener = listener
-        initAppsflyer(id)
+        if(afData != null) listener.success(afData)
+        else if(failed != null) listener.failed()
     }
 
     abstract fun getIntroItems(): List<IntroItem>
     abstract fun getIntroBgColor() : Int
     abstract fun getAppUiClassName() : Class<*>
+    abstract fun getAppsflyerId() : String
 
     override fun onCreate() {
         super.onCreate()
         setTheme(R.style.AppThemeLib)
         instance = this
         FirebaseApp.initializeApp(applicationContext)
+        initAppsflyer(getAppsflyerId())
     }
 
     private fun initAppsflyer(id: String) {
@@ -38,14 +43,16 @@ abstract class App : Application() {
                 for (attrName in conversionData.keys) {
                     params.append(attrName).append("=").append(conversionData[attrName]).append("&")
                 }
+                val result = params.toString().replace(" ", "_")
+                afData = result
                 if(listener != null) {
-                    listener!!.success(params.toString().replace(" ", "_"))
+                    listener!!.success(result)
                     listener = null
                 }
             }
 
             override fun onConversionDataFail(errorMessage: String) {
-                Log.d("LOG_TAG", "error getting conversion data: $errorMessage")
+                failed = true
                 if (listener != null) {
                     listener!!.failed()
                     listener = null
@@ -63,11 +70,8 @@ abstract class App : Application() {
             }
         }
 
-        if(id.isNullOrEmpty()) listener?.failed()
-        else {
-            AppsFlyerLib.getInstance().init(id, conversionListener, this)
-            AppsFlyerLib.getInstance().start(this)
-        }
+        AppsFlyerLib.getInstance().init(id, conversionListener, this)
+        AppsFlyerLib.getInstance().start(this)
 
     }
 }

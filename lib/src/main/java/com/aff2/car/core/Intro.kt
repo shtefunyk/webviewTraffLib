@@ -1,11 +1,11 @@
-package com.traffbooster.car.core
+package com.aff2.car.core
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro
 import com.github.appintro.AppIntroFragment
-import com.traffbooster.car.R
+import com.aff2.car.R
 
 open class Intro: AppIntro() {
 

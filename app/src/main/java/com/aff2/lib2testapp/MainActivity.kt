@@ -1,6 +1,6 @@
-package com.traffbooster.driver
+package com.aff2.lib2testapp
 
-import com.traffbooster.car.core.StartActivity
+import com.aff2.car.core.StartActivity
 
 class MainActivity : StartActivity() {
 
