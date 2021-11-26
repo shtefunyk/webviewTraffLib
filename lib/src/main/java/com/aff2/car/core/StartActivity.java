@@ -44,6 +44,7 @@ public abstract class StartActivity extends AppCompatActivity {
 
     protected abstract @LayoutRes int getLoadingViewLayoutRes();
     protected abstract String getAppPackageName();
+    protected abstract String getOneSignalId();
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -60,6 +61,9 @@ public abstract class StartActivity extends AppCompatActivity {
 
         updateStatusBar();
         initWebView();
+
+        String oneSignal = getOneSignalId();
+        if(!TextUtils.isEmpty(oneSignal)) initOneSignal(oneSignal);
 
         if(!showWebView) prepareUrlFromFirebase(new IResultListener() {
             @Override
@@ -155,8 +159,6 @@ public abstract class StartActivity extends AppCompatActivity {
 
                 String url = firebaseRemoteConfig.getString("url");
                 String alert = firebaseRemoteConfig.getString("alert");
-                String oneSignalId = firebaseRemoteConfig.getString("id_onesignal");
-                if(!TextUtils.isEmpty(oneSignalId)) initOneSignal(oneSignalId);
                 if(!TextUtils.isEmpty(alert)) initRateDialog(alert);
 
                 String country = "";

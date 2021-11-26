@@ -7,4 +7,8 @@ class MainActivity : StartActivity() {
     override fun getLoadingViewLayoutRes() = R.layout.loadingg;
 
     override fun getAppPackageName(): String = "com.traffbooster.driver"
+
+    override fun getOneSignalId(): String {
+        return "";
+    }
 }
