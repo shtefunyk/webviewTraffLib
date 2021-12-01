@@ -36,9 +36,4 @@ public class TestApp extends App {
         return R.color.colorIntro;
     }
 
-    @NonNull
-    @Override
-    public String getAppsflyerId() {
-        return "tuRVfbsRT7QoUMoFqjUL8a";
-    }
 }

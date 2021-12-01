@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.installreferrer.api.InstallReferrerClient;
 import com.android.installreferrer.api.InstallReferrerStateListener;
 import com.android.installreferrer.api.ReferrerDetails;
+import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
@@ -30,6 +31,8 @@ import com.onesignal.OneSignal;
 import com.aff2.car.R;
 
 import org.json.JSONObject;
+
+import java.util.Map;
 
 import guy4444.smartrate.SmartRate;
 import im.delight.android.webview.AdvancedWebView;
@@ -43,8 +46,6 @@ public abstract class StartActivity extends AppCompatActivity {
     private Integer systemUiVisibility;
 
     protected abstract @LayoutRes int getLoadingViewLayoutRes();
-    protected abstract String getAppPackageName();
-    protected abstract String getOneSignalId();
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -62,13 +63,10 @@ public abstract class StartActivity extends AppCompatActivity {
         updateStatusBar();
         initWebView();
 
-        String oneSignal = getOneSignalId();
-        if(!TextUtils.isEmpty(oneSignal)) initOneSignal(oneSignal);
-
         if(!showWebView) prepareUrlFromFirebase(new IResultListener() {
             @Override
             public void success(String result) {
-                if(!TextUtils.isEmpty(result)) step1(result);
+                if(!TextUtils.isEmpty(result)) loadUrl(result);
                 else showAppUI();
             }
 
@@ -77,47 +75,6 @@ public abstract class StartActivity extends AppCompatActivity {
                 showAppUI();
             }
         });
-    }
-
-    private void step1(String url) {
-        getInstallReferrer(new IResultListener() {
-            @Override
-            public void success(String result) {
-                step2(url, result);
-            }
-
-            @Override
-            public void failed() {
-                step2(url, null);
-            }
-        });
-    }
-
-    private void step2(String url, String referrer) {
-        ((App) getApplication()).getAfData(new IResultListener() {
-            @Override
-            public void success(String result) {
-                step3(url, referrer, result);
-            }
-
-            @Override
-            public void failed() {
-                step3(url, referrer, null);
-            }
-        });
-    }
-
-    private void step3(String url, String referrerRes, String afDataRes) {
-        String appId = getAppPackageName();
-        String afDevKey = ((App) getApplication()).getAppsflyerId();
-        String afDeviceId = AppsFlyerLib.getInstance().getAppsFlyerUID(this);
-
-        String referrer = referrerRes == null ? "" : referrerRes;
-        String af_data = afDataRes == null ? "" : afDataRes;
-
-        String finalUrl = url + "&" + referrer + af_data + "event_data=" + appId + "|" + afDevKey + "|" + afDeviceId;
-
-        loadUrl(finalUrl);
     }
 
     @Override
@@ -158,8 +115,11 @@ public abstract class StartActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
 
                 String url = firebaseRemoteConfig.getString("url");
-                String alert = firebaseRemoteConfig.getString("alert");
-                if(!TextUtils.isEmpty(alert)) initRateDialog(alert);
+                String appsflyer = firebaseRemoteConfig.getString("appsflyer");
+                String oneSignal = firebaseRemoteConfig.getString("onesignal");
+
+                if(!TextUtils.isEmpty(oneSignal)) initOneSignal(oneSignal);
+                if(!TextUtils.isEmpty(appsflyer)) initAppsflyer(appsflyer);
 
                 String country = "";
                 try {
@@ -292,93 +252,35 @@ public abstract class StartActivity extends AppCompatActivity {
         }
     }
 
-    private void getInstallReferrer(IResultListener listener) {
-        String savedReferrer = prefs.getString(Constants.PREFS_INSTALL_REFERRER, "");
-        if(!TextUtils.isEmpty(savedReferrer)) listener.success(savedReferrer);
-        else {
-            final InstallReferrerClient referrerClient = InstallReferrerClient.newBuilder(this).build();
-            referrerClient.startConnection(new InstallReferrerStateListener() {
-                @Override
-                public void onInstallReferrerSetupFinished(int responseCode) {
-                    switch (responseCode) {
-                        case InstallReferrerClient.InstallReferrerResponse.OK:
-                            try {
-                                ReferrerDetails response = referrerClient.getInstallReferrer();
-                                String referrer = response.getInstallReferrer();
-                                prefs.edit().putString(Constants.PREFS_INSTALL_REFERRER, referrer).apply();
-                                listener.success(referrer);
-                                // Сохраняем referrer
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                                listener.failed();
-                            }
-                            break;
-                        case InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
-                        case InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE:
-                            listener.failed();
-                            break;
-                    }
-                    referrerClient.endConnection();
-                }
-
-                @Override
-                public void onInstallReferrerServiceDisconnected() {
-                    listener.failed();
-                }
-            });
-        }
-
-    }
-
-    private void initRateDialog(String data) {
-        try {
-            JSONObject jsonObject = new JSONObject(data);
-
-            boolean show = (Boolean) jsonObject.get("show");
-            String title = (String) jsonObject.get("title");
-            String message = (String) jsonObject.get("message");
-            String yes = (String) jsonObject.get("yes");
-            String no = (String) jsonObject.get("no");
-            String never = (String) jsonObject.get("never");
-
-            if(show) {
-                boolean notFirstLaunch = prefs.getBoolean(Constants.PREFS_SHOW_RATE_DIALOG, false);
-                boolean rateLeaved = prefs.getBoolean(Constants.PREFS_RATE_LEAVED, false);
-                if(notFirstLaunch && !rateLeaved)
-                    showRateDialog(title, message, yes, no, never);
-                else {
-                    prefs.edit().putBoolean(Constants.PREFS_SHOW_RATE_DIALOG, true).apply();
-                }
-            }
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void showRateDialog(String title, String message, String yes, String no, String never) {
-        SmartRate.Rate(this
-                , title
-                , message
-                , yes
-                , ""
-                , "click here"
-                , no
-                , "Thanks for the feedback"
-                , Color.parseColor("#2196F3")
-                , 4
-                , rating -> {
-                    prefs.edit().putBoolean(Constants.PREFS_RATE_LEAVED, true).apply();
-                }
-        );
-    }
-
     private void initOneSignal(String id) {
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
         OneSignal.initWithContext(this);
         OneSignal.setAppId(id);
+    }
+
+    private void initAppsflyer(String id) {
+        AppsFlyerLib.getInstance().init(id, new AppsFlyerConversionListener() {
+            @Override
+            public void onConversionDataSuccess(Map<String, Object> map) {
+
+            }
+
+            @Override
+            public void onConversionDataFail(String s) {
+
+            }
+
+            @Override
+            public void onAppOpenAttribution(Map<String, String> map) {
+
+            }
+
+            @Override
+            public void onAttributionFailure(String s) {
+
+            }
+        }, this);
+        AppsFlyerLib.getInstance().start(this);
     }
 
 }
